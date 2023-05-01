@@ -6,6 +6,7 @@ X_POS = 0
 Y_POS = 310
 Y_POS_DUCK = 340
 JUMP_VEL = 8.5
+WALK = 10
 
 class Dinosaur:
     def __init__(self):
@@ -23,6 +24,11 @@ class Dinosaur:
         self.jump_vel = JUMP_VEL
     
     def update(self, user_input):
+        
+        if user_input[pygame.K_RIGHT]:
+            self.dino_rect.x = self.dino_rect.x >= SCREEN_WIDTH - self.dino_rect.width and self.dino_rect.x or self.dino_rect.x + WALK
+        elif user_input[pygame.K_LEFT]:
+            self.dino_rect.x = self.dino_rect.x <= 0 and self.dino_rect.x or self.dino_rect.x - WALK
         
         if user_input[pygame.K_UP]:
             self.dino_jump = True
