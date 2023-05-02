@@ -23,6 +23,13 @@ class Dinosaur:
         self.jump_vel = JUMP_VEL
     
     def update(self, user_input):
+        # Verifica se as teclas de seta esquerda ou direita estão pressionadas
+        if user_input[pygame.K_LEFT]:
+            # Move para a esquerda
+            self.dino_rect.x -= 5
+        elif user_input[pygame.K_RIGHT]:
+            # Move para a direita
+            self.dino_rect.x += 5
         
         if user_input[pygame.K_UP]:
             self.dino_jump = True
@@ -52,8 +59,7 @@ class Dinosaur:
         self.image = DUCKING[self.steps_count//5]
         self.dino_rect.y = Y_POS_DUCK
         self.steps_count+=1
-        
-        
+              
     def jump(self):
         self.image = JUMPING
         
@@ -65,8 +71,6 @@ class Dinosaur:
             self.dino_rect.y = Y_POS
             self.dino_jump = False
             self.jump_vel = JUMP_VEL         
-        
-        
         
     def draw(self,screen):
         screen.blit(self.image, (self.dino_rect.x, self.dino_rect.y))

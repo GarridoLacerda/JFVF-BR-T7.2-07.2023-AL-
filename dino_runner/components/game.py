@@ -1,9 +1,8 @@
 import pygame
-
+from random import randrange
+from dino_runner.components.clouds import Clouds
 from dino_runner.components.dinosaur import Dinosaur
 from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS
-
-
 
 class Game:
     def __init__(self):
@@ -16,8 +15,18 @@ class Game:
         self.game_speed = 20
         self.x_pos_bg = 0
         self.y_pos_bg = 380
-        
+
         self.player = Dinosaur()
+
+        self.clouds = {
+            'cloud1': Clouds((SCREEN_WIDTH + 300), 200, speed=2),
+            'cloud2': Clouds((SCREEN_WIDTH + 600), 240, speed=2),
+            'cloud3': Clouds((SCREEN_WIDTH + 900), 180, speed=2),
+            'cloud4': Clouds((SCREEN_WIDTH + 1200), 50, speed=2)
+        }
+
+
+
 
     def run(self):
         # Game loop: events - update - draw
@@ -35,17 +44,21 @@ class Game:
 
     def update(self):
         user_input = pygame.key.get_pressed()
-        self.player.update(user_input)#chamando o metodo do player neste caso o dinossauro
-        
+        self.player.update(user_input)
+
+        for cloud in self.clouds.values():
+            cloud.update()
 
     def draw(self):
         self.clock.tick(FPS)
         self.screen.fill((255, 255, 255))
         
+        for cloud in self.clouds.values():
+            cloud.draw(self.screen)
+
         self.draw_background()
-        
         self.player.draw(self.screen)#chamar o metodo do player
-        
+
         #pygame.display.update()
         pygame.display.flip()
 
