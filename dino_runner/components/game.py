@@ -1,5 +1,6 @@
 import pygame
-from random import randrange
+
+from dino_runner.components.obstacles.obstacle_manager import ObstacleManager
 from dino_runner.components.clouds import Clouds
 from dino_runner.components.dinosaur import Dinosaur
 from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS
@@ -25,8 +26,7 @@ class Game:
             'cloud4': Clouds((SCREEN_WIDTH + 1200), 50, speed=2)
         }
 
-
-
+        self.obstacle_manager = ObstacleManager()
 
     def run(self):
         # Game loop: events - update - draw
@@ -49,6 +49,8 @@ class Game:
         for cloud in self.clouds.values():
             cloud.update()
 
+        self.obstacle_manager.update(self)
+
     def draw(self):
         self.clock.tick(FPS)
         self.screen.fill((255, 255, 255))
@@ -58,6 +60,8 @@ class Game:
 
         self.draw_background()
         self.player.draw(self.screen)#chamar o metodo do player
+
+        self.obstacle_manager.draw(self.screen)
 
         #pygame.display.update()
         pygame.display.flip()
