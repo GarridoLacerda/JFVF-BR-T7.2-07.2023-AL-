@@ -1,5 +1,5 @@
 import pygame
-
+import sys
 
 from dino_runner.components.obstacles.obstacle_manager import ObstacleManager
 from dino_runner.components.HP import Lifes
@@ -68,11 +68,6 @@ class Game:
             self.update()
             self.draw()
 
-    def reset_game(self):
-        self.score = 0
-        self.game_speed = 20
-        self.obstacle_manager.reset_obstacles()
-
     def events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -96,10 +91,9 @@ class Game:
         if not self.playing:
             if self.end_game:
                 self.game_over()
-                self.reset_game()
             else:
                 self.death_count += 1
-                if self.death_count > 0 and self.death_count % 3 == 0:
+                if self.death_count >= 3:
                     self.end_game = True
         else:
             self.score += 1
@@ -147,20 +141,28 @@ class Game:
     def show_menu(self):
         self.screen.fill((255,255,255))
 
-        text = self.font.render('Press any kay to start', True, (0,0,0))
+        if self.death_count > 0 and self.death_count < 3:
+            text = self.font.render('Press "c" to continue', True, (0,0,0))
+            text_rect = text.get_rect()
+            text_rect.center = (self.half_screen_width, self.half_screen_height + 100)
+            self.screen.blit(text, text_rect)
+            pygame.display.flip()
+            self.continue_events()
 
-        text_rect = text.get_rect()
-        text_rect.center = (self.half_screen_width, self.half_screen_height)
-        self.screen.blit(text, text_rect)
+        else:
+            text = self.font.render('Press any key to start', True, (0,0,0))
+            text_rect = text.get_rect()
+            text_rect.center = (self.half_screen_width, self.half_screen_height)
+            self.screen.blit(text, text_rect)
 
-        text = self.font.render(f'Death: {self.death_count}', True, (255,0,0))
-        text_rect.center = (150, 50)
-        self.screen.blit(text, text_rect)
+            text = self.font.render(f'Death: {self.death_count}', True, (255,0,0))
+            text_rect.center = (150, 50)
+            self.screen.blit(text, text_rect)
 
+            pygame.display.flip()
 
-        pygame.display.flip()
+            self.handle_events_on_menu()
 
-        self.handle_events_on_menu()
 
     def game_over(self):
         text = self.font.render('Game Over', True, (0,0,0))
@@ -169,9 +171,20 @@ class Game:
         text_rect.center = (self.half_screen_width, self.half_screen_height)
         self.screen.blit(text, text_rect)
 
+        text = self.font.render('Press space to quit', True, (0,0,0))
+        text_rect.center = (self.half_screen_width, self.half_screen_height + 50)
+        self.screen.blit(text, text_rect)
+
         pygame.display.flip()
 
-        self.handle_events_on_menu()
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                    pygame.quit()
+                    sys.exit()
 
     def handle_events_on_menu(self):
         for event in pygame.event.get():
@@ -179,4 +192,12 @@ class Game:
                 self.playing = False
                 self.executing = False
             elif event.type == pygame.KEYDOWN:
+                self.run()
+
+    def continue_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.playing = False
+                self.executing = False
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_c:
                 self.run()
