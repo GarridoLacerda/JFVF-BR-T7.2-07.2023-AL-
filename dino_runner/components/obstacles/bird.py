@@ -8,7 +8,7 @@ class Bird(Obstacle):
         self.image_index = 0
         self.animation_speed = 5
         self.animation_counter = 0
-        self.rect.y = random.randint(265, 285)
+        self.rect.y = random.randrange(100, 285, 10)
 
     def update(self, game_speed, obstacles):
         self.animation_counter += 1

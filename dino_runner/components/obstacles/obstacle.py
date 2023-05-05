@@ -1,4 +1,4 @@
-from dino_runner.utils.constants import SCREEN_WIDTH, OBSTACLE_Y_POS, LARGE_OBSTACLE_Y_POS
+from dino_runner.utils.constants import SCREEN_WIDTH, OBSTACLE_Y_POS, LARGE_OBSTACLE_Y_POS, collided
 
 class Obstacle:
     def __init__(self, image):
@@ -9,24 +9,24 @@ class Obstacle:
         self.rect = self.image.get_rect()
         self.rect.x = SCREEN_WIDTH
         self.rect.y = OBSTACLE_Y_POS
+        self.collided = False
 
     def update(self, game_speed, obstacles):
         self.rect.x -= game_speed
-        
+
         if self.rect.x < -self.rect.width:
             obstacles.pop()
-         
+
     def draw(self, screen):
         screen.blit(self.image, (self.rect.x, self.rect.y))
+
 
 class Cactus(Obstacle):
     def __init__(self, image):
         super().__init__(image)
 
+
 class LargeCactus(Obstacle):
     def __init__(self, image):
         super().__init__(image)
         self.rect.y = LARGE_OBSTACLE_Y_POS
-
-
-

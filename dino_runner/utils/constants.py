@@ -1,10 +1,15 @@
 import pygame
 import os
 
+#fonte
+FONT_STYLE = "freesansbold.ttf"
+
 # Global Constants
 TITLE = "Dino Runner - Professor"
 SCREEN_HEIGHT = 600
 SCREEN_WIDTH = 1100
+MENU_HEIGHT = SCREEN_HEIGHT // 2
+MENU_WIDTH = SCREEN_WIDTH // 2
 FPS = 30
 IMG_DIR = os.path.join(os.path.dirname(__file__), "..", "assets")
 
@@ -74,3 +79,5 @@ BG = pygame.image.load(os.path.join(IMG_DIR, 'Other/Track.png'))
 HEART = pygame.image.load(os.path.join(IMG_DIR, 'Other/SmallHeart.png'))
 
 DEFAULT_TYPE = "default"
+
+collided = False
