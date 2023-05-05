@@ -2,6 +2,7 @@ import pygame
 
 
 from dino_runner.components.obstacles.obstacle_manager import ObstacleManager
+from dino_runner.components.HP import Lifes
 from dino_runner.components.clouds import Clouds
 from dino_runner.components.dinosaur import Dinosaur
 from dino_runner.utils.constants import (
@@ -19,12 +20,15 @@ class Game:
         self.clock = pygame.time.Clock()
         self.playing = False
         self.executing = False
+        self.end_game = False
         self.game_speed = 20
         self.speed = 2
         self.x_pos_bg = 0
         self.y_pos_bg = 380
         self.half_screen_height = MENU_HEIGHT
         self.half_screen_width = MENU_WIDTH
+        self.obstacle_manager = ObstacleManager()
+        self.lifes = Lifes(self.obstacle_manager)
 
         self.font = pygame.font.Font(FONT_STYLE, 22)
 
@@ -37,7 +41,7 @@ class Game:
             'cloud4': Clouds((SCREEN_WIDTH + 1200), 50)
         }
 
-        self.obstacle_manager = ObstacleManager()
+        
 
         self.score = 0
         self.death_count = 0
@@ -46,16 +50,17 @@ class Game:
         self.executing = True
 
         while self.executing:
-            if not self.playing:
+            if not self.playing and not self.end_game:
                 self.show_menu()
+            elif self.end_game and not self.playing:
+                self.game_over()
 
-        pygame.dysplay.quit()
+        pygame.display.quit()
         pygame.quit()
 
     def run(self):
         # Game loop: events - update - draw
         self.playing = True
-        self.reset_game()
         print(self.death_count)
 
         while self.playing: 
@@ -81,19 +86,30 @@ class Game:
         for cloud in self.clouds.values():
             cloud.update()
 
-        self.obstacle_manager.update(self)
+        self.obstacle_manager.update(self, self.screen)
+        
+        self.lifes.update()
 
         self.update_score()
 
     def update_score(self):
-        self.score += 1
+        if not self.playing:
+            if self.end_game:
+                self.game_over()
+                self.reset_game()
+            else:
+                self.death_count += 1
+                if self.death_count > 0 and self.death_count % 3 == 0:
+                    self.end_game = True
+        else:
+            self.score += 1
 
-        if self.score % 100 == 0:
-            self.game_speed += 2
-            self.speed += 0.25
+            if self.score % 100 == 0:
+                self.game_speed += 2
+                self.speed += 0.25
 
-            for cloud in self.clouds.values():
-                cloud.speed = self.speed
+                for cloud in self.clouds.values():
+                    cloud.speed = self.speed
 
     def draw(self):
         self.clock.tick(FPS)
@@ -107,7 +123,7 @@ class Game:
         self.obstacle_manager.draw(self.screen)
 
         self.draw_score()
-
+        self.lifes.draw(self.screen)
         pygame.display.flip()
 
     def draw_score(self):
@@ -139,6 +155,18 @@ class Game:
 
         text = self.font.render(f'Death: {self.death_count}', True, (255,0,0))
         text_rect.center = (150, 50)
+        self.screen.blit(text, text_rect)
+
+
+        pygame.display.flip()
+
+        self.handle_events_on_menu()
+
+    def game_over(self):
+        text = self.font.render('Game Over', True, (0,0,0))
+
+        text_rect = text.get_rect()
+        text_rect.center = (self.half_screen_width, self.half_screen_height)
         self.screen.blit(text, text_rect)
 
         pygame.display.flip()

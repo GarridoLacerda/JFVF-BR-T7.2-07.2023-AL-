@@ -77,6 +77,8 @@ HAMMER = pygame.image.load(os.path.join(IMG_DIR, 'Other/hammer.png'))
 BG = pygame.image.load(os.path.join(IMG_DIR, 'Other/Track.png'))
 
 HEART = pygame.image.load(os.path.join(IMG_DIR, 'Other/SmallHeart.png'))
+HEART2 = pygame.image.load(os.path.join(IMG_DIR, 'Other/SmallHeart2.png'))
+HEART3 = pygame.image.load(os.path.join(IMG_DIR, 'Other/SmallHeart3.png'))
 
 DEFAULT_TYPE = "default"
 

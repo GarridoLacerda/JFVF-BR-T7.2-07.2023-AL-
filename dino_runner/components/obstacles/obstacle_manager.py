@@ -8,8 +8,9 @@ class ObstacleManager:
     def __init__(self):
         self.obstacles = []
         self.hp = 3
+        #self.death_count = 0
 
-    def update(self, game):
+    def update(self, game, screen):
         if len(self.obstacles) == 0:
             obstacle_type = random.choice([Cactus, LargeCactus, Bird])
             if obstacle_type == Cactus:
@@ -28,7 +29,8 @@ class ObstacleManager:
                     if self.hp <= 0:
                         pygame.time.delay(500)
                         game.playing = False
-                    game.death_count += 1
+                        self.hp = 3
+                        #self.death_count += 1
                     self.obstacles.remove(obstacle) # remover o obstáculo colidido
                     break
             obstacle.update(game.game_speed, self.obstacles)
