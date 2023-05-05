@@ -24,15 +24,20 @@ class ObstacleManager:
         for obstacle in self.obstacles:
             if not obstacle.collided:
                 if game.player.dino_rect.colliderect(obstacle.rect):
-                    obstacle.collided = True
-                    self.hp -= 1
-                    if self.hp <= 0:
-                        pygame.time.delay(500)
-                        game.playing = False
-                        self.hp = 3
-                        #self.death_count += 1
-                    self.obstacles.remove(obstacle) # remover o obstáculo colidido
-                    break
+                    if not game.player.has_power_up:
+                        obstacle.collided = True
+                        self.hp -= 1
+                        if self.hp <= 0:
+                            pygame.time.delay(500)
+                            game.playing = False
+                            self.hp = 3
+                        self.obstacles.remove(obstacle)  # remova o obstáculo colidido
+                    else:
+                        obstacle.collided = True
+                        self.obstacles.remove(obstacle)  # remova o obstáculo colidido
+                        break
+
+
             obstacle.update(game.game_speed, self.obstacles)
 
     def draw(self, screen):

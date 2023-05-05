@@ -1,6 +1,7 @@
 import pygame
 import sys
 
+from dino_runner.components.power_ups.power_up_manager import PowerUpManager
 from dino_runner.components.obstacles.obstacle_manager import ObstacleManager
 from dino_runner.components.HP import Lifes
 from dino_runner.components.clouds import Clouds
@@ -8,8 +9,9 @@ from dino_runner.components.dinosaur import Dinosaur
 from dino_runner.utils.constants import (
     BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH,
     TITLE, FPS, FONT_STYLE, MENU_WIDTH,
-    MENU_HEIGHT
+    MENU_HEIGHT, DEFAULT_TYPE
 )
+
 
 class Game:
     def __init__(self):
@@ -28,6 +30,7 @@ class Game:
         self.half_screen_height = MENU_HEIGHT
         self.half_screen_width = MENU_WIDTH
         self.obstacle_manager = ObstacleManager()
+        self.power_up_manager = PowerUpManager()
         self.lifes = Lifes(self.obstacle_manager)
 
         self.font = pygame.font.Font(FONT_STYLE, 22)
@@ -58,6 +61,9 @@ class Game:
         pygame.display.quit()
         pygame.quit()
 
+    def reset_game(self):
+        self.obstacle_manager.reset_obstacles()
+        self.power_up_manager.reset_power_ups()
     def run(self):
         # Game loop: events - update - draw
         self.playing = True
@@ -82,6 +88,7 @@ class Game:
             cloud.update()
 
         self.obstacle_manager.update(self, self.screen)
+        self.power_up_manager.update(self)
         
         self.lifes.update()
 
@@ -107,7 +114,7 @@ class Game:
 
     def draw(self):
         self.clock.tick(FPS)
-        self.screen.fill((255, 255, 255))
+        self.screen.fill((86, 193, 216))
 
         for cloud in self.clouds.values():
             cloud.draw(self.screen)
@@ -115,10 +122,30 @@ class Game:
         self.draw_background()
         self.player.draw(self.screen)
         self.obstacle_manager.draw(self.screen)
+        self.draw_power_up_time()
+        self.power_up_manager.draw(self.screen)
 
         self.draw_score()
         self.lifes.draw(self.screen)
         pygame.display.flip()
+
+    def draw_power_up_time(self):
+        if self.player.has_power_up:
+            time_to_show = round((self.player.power_up_time_up - pygame.time.get_ticks())/1000,2)
+
+            if time_to_show >= 0:
+                font = pygame.font.Font(FONT_STYLE, 22)
+                text = font.render(f"{time_to_show}", True, (255,0,0))
+
+                text_rect = text.get_rect()
+                text_rect.x = 500
+                text_rect.y = 50
+
+                self.screen.blit(text, text_rect)
+
+            else:
+                self.player.has_power_up = False
+                self.player.type = DEFAULT_TYPE
 
     def draw_score(self):
         text = self.font.render(f'Score: {self.score}', True, (0,0,0))
@@ -147,6 +174,7 @@ class Game:
             text_rect.center = (self.half_screen_width, self.half_screen_height + 100)
             self.screen.blit(text, text_rect)
             pygame.display.flip()
+            self.reset_game()
             self.continue_events()
 
         else:

@@ -81,5 +81,5 @@ HEART2 = pygame.image.load(os.path.join(IMG_DIR, 'Other/SmallHeart2.png'))
 HEART3 = pygame.image.load(os.path.join(IMG_DIR, 'Other/SmallHeart3.png'))
 
 DEFAULT_TYPE = "default"
-
+SHIELD_TYPE = "shield"
 collided = False
